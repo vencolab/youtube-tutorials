@@ -2,12 +2,24 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import "./Home.css";
 import {Logo} from '../images/Netflix';
-import {ConnectButton , ChainSelector , Icon, TabList , Tab } from 'web3uikit';
-
+import {ConnectButton, Button , ChainSelector , Icon, TabList , Tab , useNotification } from 'web3uikit';
+import { useState } from 'react';
 import { NFTs } from '../helpers/library';
+import { useMoralis } from 'react-moralis';
 
 const Home = () => {
 
+  const {isAuthenticated} = useMoralis();
+  const dispatch = useNotification;
+
+  const handleNewNotification = () => {
+    dispatch({
+      type: 'error', 
+      message: 'connect your wallet', 
+      title: "not authenticated", 
+      position: 'topL',
+    })
+  }
 return(
   <>
   <div className="logo">
@@ -20,16 +32,52 @@ return(
     <ConnectButton />
   </div>
   <div className='topBanner'>
-    <TabList defaultActiveKey={1} tabStyle='bulbUniion'>
+    <TabList defaultActiveKey={1} tabStyle='bulbUnion'>
     <Tab
         tabKey={1}
         tabName="My NFTs"
       >
-        <div>
+        <div className='title'>
           Your NFTs
         </div>
         <div className='scene'>
           <img src="https://asset.akumudragonz.io/unrevealed/akumu_unrevealed.gif"  alt="loading..." className="sceneImg"></img>
+          <p className='sceneDesc'>{NFTs[0].description}</p>
+          <div className='playButton'>
+            { isAuthenticated ? (
+                  <>
+                  <Button
+                    icon='plus'
+                    text='View Info'
+                    theme='secondary'
+                    type='button' />
+                  <Button
+                    icon='plus'
+                    text='Add to collection'
+                    theme='translucent'
+                    type='button'
+                    onClick={() => console.log(isAuthenticated)} 
+                    />
+                    </>
+            ) : (
+              <>
+              <Button
+                icon='plus'
+                text='View Info'
+                theme='secondary'
+                type='button' 
+                onClick={handleNewNotification}
+                />
+                <Button
+                  icon='plus'
+                  text='Add to collection'
+                  theme='translucent'
+                  type='button'
+                  onClick={handleNewNotification}                  
+                  />
+                  </>
+            )}
+          </div>
         </div>
       </Tab>
       <Tab
